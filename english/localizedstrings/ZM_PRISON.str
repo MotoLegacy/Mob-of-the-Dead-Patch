@@ -1,0 +1,24 @@
+VERSION				"1"
+CONFIG					"C:\projects\cod\t7\bin\StringEd.cfg"
+FILENOTES				""
+
+REFERENCE			AFTERLIFE_HOWTO
+LANG_ENGLISH			"Press ^3[{+attack}]^7 to shock"
+
+REFERENCE			AFTERLIFE_HOWTO_2
+LANG_ENGLISH			"Press ^3[{+gostand}]^7 to levitate"
+
+REFERENCE			AFTERLIFE_KILL
+LANG_ENGLISH			"Hold ^3&&1^7 to enter Afterlife"
+
+REFERENCE			AFTERLIFE_INTERACT
+LANG_ENGLISH			"Shock to turn on power"
+
+REFERENCE			AFTERLIFE_OVERLOAD
+LANG_ENGLISH			"Shock to overload"
+
+REFERENCE			OUT_OF_LIVES
+LANG_ENGLISH			"No Afterlife Remaining"
+
+
+ENDMARKER

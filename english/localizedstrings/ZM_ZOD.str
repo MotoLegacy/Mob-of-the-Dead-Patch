@@ -1,0 +1,8 @@
+VERSION				"1"
+CONFIG					"C:\projects\cod\t7\bin\StringEd.cfg"
+FILENOTES				""
+
+REFERENCE			ROCKET_HINT
+LANG_ENGLISH			"Press ^3[{+melee}]^7 to attack with Shield"
+
+ENDMARKER

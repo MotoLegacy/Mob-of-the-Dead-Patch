@@ -1,0 +1,16 @@
+scripts/_NSZ/nsz_brutus.gsc
+scripts/shared/ai/archetype_brutus.csc
+scripts/shared/ai/archetype_brutus.gsc
+scripts/shared/ai/archetype_brutus.gsh
+scripts/zm/_zm_easteregg_song.gsc
+scripts/zm/am_alcatraz_amb.csc
+scripts/zm/zm_alcatraz_hud_buildables.gsc
+scripts/zm/zm_alcatraz_island.csc
+scripts/zm/zm_alcatraz_island.gsc
+scripts/zm/zm_alcatraz_perks.gsc
+scripts/zm/zm_prison_sq_clickbait.gsc
+scripts/zm/zm_usermap.gsc
+ui/uieditor/widgets/motdr/InventoryItem.lua
+ui/uieditor/widgets/motdr/InventoryMain.lua
+ui/uieditor/widgets/zm_afterlife/ZmAfterlifeCounter.lua
+ui/uiedtiro/widgets/zm_afterlife/ZmAfterlifeMana.lua
