@@ -33,6 +33,7 @@
 #insert scripts\zm\_zm_perk_deadshot.gsh;
 #insert scripts\zm\_zm_perk_electric_cherry.gsh;
 
+// warp models (FIXME - need cherry and stamin warp)
 #precache( "xmodel", "p7_zm_vending_jugg_bo3_warp" );
 #precache( "xmodel", "p7_zm_vending_sleight_bo3_warp" );
 #precache( "xmodel", "p7_zm_vending_doubletap2_bo3_warp" );
@@ -53,7 +54,7 @@ function autoexec init()
 function jugg_warp_init()
 {
 	level waittill("juggernog_on");
-	self PlayLoopSound("perksacola_loop");
+	//self PlayLoopSound("perksacola_loop", 1);
 	jugg_model = GetEntArray("vending_jugg","targetname");
 	for ( i = 0; i < jugg_model.size; i++ )
 	{
@@ -64,7 +65,7 @@ function jugg_warp_init()
 function speed_warp_init()
 {
 	level waittill("sleight_on");
-	self PlayLoopSound("perksacola_loop");
+	//self PlayLoopSound("perksacola_loop", 1);
 	speed_model = GetEntArray("vending_sleight","targetname");
 	for ( i = 0; i < speed_model.size; i++ )
 	{
@@ -75,7 +76,7 @@ function speed_warp_init()
 function tap_warp_init()
 {
 	level waittill("doubletap_on");
-	self PlayLoopSound("perksacola_loop");
+	//self PlayLoopSound("perksacola_loop", 1);
 	tap_model = GetEntArray(DOUBLETAP2_RADIANT_MACHINE_NAME,"targetname");
 	for ( i = 0; i < tap_model.size; i++ )
 	{
@@ -86,7 +87,7 @@ function tap_warp_init()
 function ads_warp_init()
 {
 	level waittill("deadshot_on");
-	self PlayLoopSound("perksacola_loop");
+	//self PlayLoopSound("perksacola_loop", 1);
 	ads_model = GetEntArray(DEADSHOT_RADIANT_MACHINE_NAME,"targetname");
 	for ( i = 0; i < ads_model.size; i++ )
 	{
@@ -97,7 +98,7 @@ function ads_warp_init()
 function cherry_warp_init()
 {
 	level waittill("electric_cherry_on");
-	self PlayLoopSound("perksacola_loop");
+	//self PlayLoopSound("perksacola_loop", 1);
 	cherry_model = GetEntArray(ELECTRIC_CHERRY_RADIANT_MACHINE_NAME,"targetname");
 	for ( i = 0; i < cherry_model.size; i++ )
 	{

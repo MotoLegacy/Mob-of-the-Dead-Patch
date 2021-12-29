@@ -94,7 +94,7 @@ function spoon_easy_cleanup() {
 function extra_death_func_to_check_for_splat_death() {
 	self thread zm_spawner::zombie_death_animscript();
 	if ( self.damagemod == "MOD_GRENADE" || self.damagemod == "MOD_GRENADE_SPLASH" ) {
-		if ( self.damageweapon.name == "shotgun_acidgat_bullet" ) {
+		if ( self.damageweapon.name == "bo2_acidgat_bullet" ) {
 			if ( IsPlayer( self.attacker ) ) {
 				self notify( "killed_by_a_blundersplat" );
 			}
@@ -164,7 +164,7 @@ function wait_for_initial_conditions() {
 			b_spoon_shocked = 1;
 			t_spoon Delete();
 			m_spoon Delete();
-			player PlaySoundToPlayer( "zmb_laugh_child", player );
+			player PlaySoundToPlayer( "zmb_spooky_laugh", player );
 		}
 	}
 	m_spoon_pickup Show();
@@ -269,7 +269,10 @@ function dip_the_spoon() {
 	level flag::wait_till( "charged_spoon" );
 	//IPrintLnBold("changing done");
 	wait 1;
-	level.t_bathtub PlaySound( "zmb_laugh_child" );
+	foreach(player in GetPlayers()) {
+		player PlaySoundToPlayer("zmb_spooky_laugh", player);
+	}
+	//level.t_bathtub PlaySound( "zmb_spooky_laugh" );
 	self thread thrust_the_spork();
 }
 

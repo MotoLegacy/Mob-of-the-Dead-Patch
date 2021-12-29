@@ -52,12 +52,15 @@
 function autoexec main()
 {
 	level flag::wait_till( "initial_players_connected" );
-	level.sndperksacolaloopoverride = &sndperksacolaloop;
+	level thread cellblockambience();
+	//level.sndperksacolaloopoverride = &sndperksacolaloop;
 	level.sndperksacolajingleoverride = &sndperksacolajingle;
 	thread sndstingersetup();
 	thread sndlastlifesetup();
 	thread sndsetupendgamemusicstates();
 	thread sndspectatorsetup();
+	thread create_fire();
+	thread create_misc_amb();
 	//thread sndmusicegg();
 }
 
@@ -108,19 +111,20 @@ function sndperksacolajingle( perksacola )
 	if ( self.jingle_is_playing == 0 && level.music_override == 0 )
 	{
 		self.jingle_is_playing = 1;
-		self.sndent StopLoopSound( 1 );
+		//self.sndent StopLoopSound( 1 );
 		self.sndent PlaySoundWithNotify( self.script_sound, "sndJingleDone" );
 		self.sndent waittill( "sndJingleDone" );
-		self.sndent PlayLoopSound( "mus_perks_loop", 1 );
+		//self.sndent PlayLoopSound( "mus_perks_loop", 1 );
 		self.jingle_is_playing = 0;
 	}
 }
 
 function sndperksacolaloop()
 {
+	IPrintLnBold("playing phone loop shit");
 	self endon( "death" );
 	self.sndent = Spawn( "script_origin", self.origin );
-	self.sndent PlayLoopSound( "mus_perks_loop", 1 );
+	self.sndent PlayLoopSound( "perksacola_loop", 1 );
 	while ( 1 )
 	{
 		wait RandomFloatRange( 31, 45 );
@@ -800,4 +804,144 @@ function is_true(thing)
 		return 1;
 	else
 		return 0;
+}
+
+//
+// ambience
+//
+
+function cellblockambience()
+{
+	ambientEnt = Spawn("script_origin", (0, 0, 0));
+	ambientEnt.targetname = "ambient_tracker";
+	wait 10;
+	ambientEnt thread ambient_checker();
+	ambientEnt thread ambience_chains();
+	wait 2;
+	ambientEnt thread ambient_underscore();
+	ambientEnt thread ambience_thunder();
+}
+
+function ambient_underscore()
+{
+	//IPrintLnBold("starting underscore..");
+	for(;;)
+	{
+		sound = "mus_alcatraz_underscore";
+		self PlaySoundWithNotify(sound, sound + "wait");
+		self waittill (sound + "wait");
+		wait(0.05);
+	}
+}
+
+function ambient_checker()
+{
+	for(;;)
+	{
+		foreach(player in GetPlayers())
+		{
+			current_zone = player zm_zonemgr::get_player_zone();
+			//IPrintLnBold("got player: " + player.name + " | in zone: " + current_zone);
+
+			if (current_zone == "start_zone" || current_zone == "library_zone" || current_zone == "cellblock_rightside_zone" || current_zone == "cellblock_leftside_zone" || current_zone == "cellblock_hallway_zone" || current_zone == "cellblock_out_wardens_zone" || current_zone == "ug_docks_zone" || current_zone == "gondola_roof_zone" || current_zone == "top_dogfeeder_zone_b" || current_zone == "top_dogfeeder_zone_d" || current_zone == "cafe_stair_zone" || current_zone == "cellblock_dogfeeder_zone" || current_zone == "cellblock_dogfeeder_zone_b" || current_zone == "cellblock_dogfeeder_zone_c")
+			{
+				player.can_hear_thunder = true;
+				player.can_hear_chains = true;
+			}	
+			else if (current_zone == "cellblock_leftside_zone_b" || current_zone == "wardens_zone" || current_zone == "cellblock_out_wardens_zone_b" || current_zone == "underground_wo_zone" || current_zone == "underground_zone_c" || current_zone == "ug_docks_zone_c" || current_zone == "ug_docks_zone_d" || current_zone == "ug_docks_zone_e" || current_zone == "upper_docks_zone" || current_zone == "docks_zone" || current_zone == "docks_zone_c" || current_zone == "top_dogfeeder_zone_e" || current_zone == "infirmary_zone" || current_zone == "roof_zone")
+			{
+				player.can_hear_thunder = true;
+				player.can_hear_chains = false;
+			}
+			else if (current_zone == "shower_zone" || current_zone == "tunnel_zone_c" || current_zone == "infirmary_zone_b")
+			{
+				player.can_hear_thunder = false;
+				player.can_hear_chains = true;
+			}
+			else
+			{
+				player.can_hear_thunder = false;
+				player.can_hear_chains = false;
+			}
+		}
+		wait 3;
+	}
+}
+
+function ambience_chains()
+{
+	while(1)
+	{
+		//IPrintLnBold("running");
+		foreach(player in GetPlayers())
+		{
+			// no ambience in afterlife!
+			/*if (is_true(player.afterlife))
+				return;*/
+
+			if (is_true(player.can_hear_chains)) {
+				chain_num = RandomIntRange( 0, 3 );
+				sound = "amb_cellblock_hanging_" + chain_num;
+				player PlaySoundToPlayer( sound, player );
+				wait 2.4;
+			}
+		}
+		wait_timer = RandomIntRange( 2, 4 );
+		wait wait_timer;
+	}
+
+}
+
+function ambience_thunder()
+{
+	while(1)
+	{
+		foreach(player in GetPlayers()) {
+			if (is_true(player.can_hear_thunder)) {
+				thunder_num = RandomIntRange( 0, 5 );
+				sound = "amb_thunder_clap_" + thunder_num;
+				player PlaySoundToPlayer( sound, player );
+				wait 5;
+			}
+		}
+		wait_timer = RandomIntRange( 1, 15 );
+		wait wait_timer;
+	}
+
+}
+
+function create_fire()
+{
+	fire1 = Spawn("script_origin", (1666, -218, 5613));
+	fire1 PlayLoopSound("amb_hellfire");
+
+	fire2 = Spawn("script_origin", (1311, 145, 5615));
+	fire2 PlayLoopSound("amb_hellfire");
+
+	fire3 = Spawn("script_origin", (889, -20, 5607));
+	fire3 PlayLoopSound("amb_hellfire");
+
+	fire4 = Spawn("script_origin", (2108, -577, 5638));
+	fire4 PlayLoopSound("amb_hellfire");
+
+	fire5 = Spawn("script_origin", (1750, -700, 5607));
+	fire5 PlayLoopSound("amb_hellfire");
+
+	fire6 = Spawn("script_origin", (1746, -1247, 5612));
+	fire6 PlayLoopSound("amb_hellfire");
+}
+
+function create_misc_amb()
+{
+	nixie_loop = Spawn("script_origin", (70, -2108, 4560));
+	nixie_loop thread nixie_do_loop();
+}
+
+function nixie_do_loop()
+{
+	for(;;)
+	{
+		PlaySoundAtPosition("nixie_loop", self.origin);
+		wait 0.25;
+	}
 }

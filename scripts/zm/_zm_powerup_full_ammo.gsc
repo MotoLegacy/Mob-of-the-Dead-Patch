@@ -16,6 +16,7 @@
 #using scripts\zm\_zm_powerups;
 #using scripts\zm\_zm_score;
 #using scripts\zm\_zm_spawner;
+#using scripts\zm\_zm_weapons;
 #using scripts\zm\_zm_utility;
 
 #insert scripts\zm\_zm_powerups.gsh;
@@ -109,20 +110,20 @@ function full_ammo_powerup( drop_item , player)
 			}
 
 			// Give ammo to players in Afterlife
-			/*if ( players[i].afterlife ) {
+			if ( players[i].afterlife ) {
+				//IPrintLnBold("in al");
 				loadout = players[i].loadout;
 
-				for (i = 0; i < loadout.weapons.size; i++) {
-					
-					weapon = loadout.weapons[i];
-					loadout.weapons.stockcount[i] = weapon.maxammo;
-
-					//players[i] GiveMaxAmmo( GetWeapon(weapon) );
+				i = 0;
+				while ( i < loadout.weapons.size )
+				{
+					// this is kinda shitty, but just set the stock ammo to 999, this will automatically adjust
+					loadout.stockcount[i] = 999;
+					i++;
 				}
-				//IPrintLnBold("in Afterlife");
 
 				players[i].loadout = loadout;
-			}*/
+			}
 			
 
 			if ( players[i] HasWeapon( primary_weapons[x] ) )

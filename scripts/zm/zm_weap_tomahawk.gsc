@@ -219,7 +219,7 @@ function tomahawk_thrown( grenade )
 			return;
 		}
 	}
-	if( level.tomahawk_poster == true)
+	if(level.tomahawk_poster == true)
 	{
 		complete = self zm_prison_spoon::tomahawk_the_poster(grenade, self);
 		if(complete == 1)
@@ -519,7 +519,7 @@ function tomahawk_pickup()
 		trigger.script_noteworthy = "retriever_pickup_trigger";
 		trigger useTriggerRequireLookAt();
 		trigger triggerIgnoreTeam();
-		trigger setHintString( "Hold ^3&&1^7 for Hell's Retriever" );
+		trigger setHintString( "Hold ^3&&1^7 to pick up Hell's Retriever" );
 		trigger setCursorHint( "HINT_NOICON" );
 	
 		trigger thread tomahawk_pickup_trigger( "zombie_tomahawk" );
@@ -531,7 +531,7 @@ function tomahawk_pickup()
 		trigger_upgraded triggerIgnoreTeam();
 		m_tomahawk clientfield::set( "play_tomahawk_fx", 2 );
 		trigger_upgraded.script_noteworthy = "redeemer_pickup_trigger";
-		trigger_upgraded setHintString( "Hold ^3&&1^7 for Hell's Redeemer" );
+		trigger_upgraded setHintString( "Hold ^3&&1^7 to pick up Hell's Redeemer" );
 		trigger_upgraded setCursorHint( "HINT_NOICON" );
 	
 		trigger_upgraded thread tomahawk_pickup_trigger( "zombie_tomahawk_upgraded" );
@@ -571,9 +571,9 @@ function tomahawk_pickup_trigger( tomahawk )
 		player.loadout.hastomahawk = 1;
 		player TakeWeapon( GetWeapon( tomahawk + "_flourish" ) );
 		
-		name = "Hell's Retriever";
+		name = "Retriever";
 		if ( tomahawk == "zombie_tomahawk_upgraded" )
-			name = "Hell's Redeemer";
+			name = "Redeemer";
 		
 		player thread tomahawk_tutorial_hint( name );
 		
@@ -640,7 +640,7 @@ function setting_tutorial_hud()
 function tomahawk_tutorial_hint( name )
 {
 	hud = setting_tutorial_hud();
-	hud setText( "Press [{+smoke}] to Throw the " + name );
+	hud setText( "Press ^3[{+smoke}]^7 to Throw the " + name );
 	self util::waittill_notify_or_timeout( "throwing_tomahawk", 5 );
 	wait 1;
 	hud destroy();

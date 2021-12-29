@@ -364,7 +364,7 @@ function onpickup_plane( player ) {
 		level thread zm_alcatraz_amb::sndplaystinger( "piece_" + level.sndplanepieces );
 		level.sndplanepieces++;
 	}
-	player PlaySound( "zmb_craftable_pickup" );
+	//player PlaySound( "zmb_craftable_pickup" );
 	vo_alias_call = undefined;
 	vo_alias_response = undefined;
 	self pickupfrommover();
@@ -600,101 +600,116 @@ function fuel_hud_on_crafted() {
 }
 
 function ondrop_fuel( player ) {
-	level notify( "dropped_" + self.piecename );
-	self.piece_owner = undefined;
-	PlayFXOnTag( level._effect[ "quest_item_glow" ], self.model, "tag_origin" );
-	if ( isdefined( level.sndfuelpieces ) ) {
-		level.sndfuelpieces--;
-	}
-	switch( self.piecename ) {
-		case "fuel1":
-			field_name = "quest_state1";
-			break;
-		case "fuel2":
-			field_name = "quest_state2";
-			break;
-		case "fuel3":
-			field_name = "quest_state3";
-			break;
-		case "fuel4":
-			field_name = "quest_state4";
-			break;
-		case "fuel5":
-			field_name = "quest_state5";
-			break;
-	}
-	level clientfield::set( field_name, 5 );
-	if ( !level.is_forever_solo_game || GetPlayers().size > 1) {
-		level clientfield::set( "piece_player_" + self.piecename, 0 );
-	}
+    level notify( "dropped_" + self.piecename );
+    self.piece_owner = undefined;
+    PlayFXOnTag( level._effect[ "quest_item_glow" ], self.model, "tag_origin" );
+    if ( isdefined( level.sndfuelpieces ) ) {
+        level.sndfuelpieces--;
+    }
+    switch( self.piecename ) {
+        case "fuel1":
+            field_name = "quest_state1";
+            piece_name = "cloth";
+            break;
+        case "fuel2":
+            field_name = "quest_state2";
+            piece_name = "fueltanks";
+            break;
+        case "fuel3":
+            field_name = "quest_state3";
+            piece_name = "engine";
+            break;
+        case "fuel4":
+            field_name = "quest_state4";
+            piece_name = "steering";
+            break;
+        case "fuel5":
+            field_name = "quest_state5";
+            piece_name = "rigging";
+            break;
+    }
+    level clientfield::set( field_name, 5 );
+    if ( !level.is_forever_solo_game || GetPlayers().size > 1) {
+        level clientfield::set( "piece_player_" + piece_name, 0 );
+    }
 }
-
+ 
 function onpickup_fuel( player ) {
-	player PlaySound( "zmb_craftable_pickup" );
-	if ( !isdefined( level.sndfuelpieces ) || level.sndfuelpieces >= 5 ) {
-		level.sndfuelpieces = 0;
-	}
-	level.sndfuelpieces++;
-	level thread zm_alcatraz_amb::sndplaystinger( "gas_" + level.sndfuelpieces );
-	self pickupfrommover();
-	self.piece_owner = player;
-	if ( isdefined( player ) ) {
-		player zm_utility::do_player_general_vox( "quest", "fuel_pickup", undefined, 100 );
-	}
-	switch( self.piecename ) {
-		case "fuel1":
-			field_name = "quest_state1";
-			break;
-		case "fuel2":
-			field_name = "quest_state2";
-			break;
-		case "fuel3":
-			field_name = "quest_state3";
-			break;
-		case "fuel4":
-			field_name = "quest_state4";
-			break;
-		case "fuel5":
-			field_name = "quest_state5";
-			break;
-	}
-	level thread zm_alcatraz_hud_buildables::players_hud_fuel(self);
-	level clientfield::set( field_name, 6 );
-	if ( !level.is_forever_solo_game || GetPlayers().size > 1) {
-		level clientfield::set( "piece_player_" + self.piecename, player.characterIndex + 1 );
-	}
-	self thread ondisconnect_common( player );
+    //player PlaySound( "zmb_craftable_pickup" );
+    if ( !isdefined( level.sndfuelpieces ) || level.sndfuelpieces >= 5 ) {
+        level.sndfuelpieces = 0;
+    }
+    level.sndfuelpieces++;
+    level thread zm_alcatraz_amb::sndplaystinger( "gas_" + level.sndfuelpieces );
+    self pickupfrommover();
+    self.piece_owner = player;
+    if ( isdefined( player ) ) {
+        player zm_utility::do_player_general_vox( "quest", "fuel_pickup", undefined, 100 );
+    }
+    switch( self.piecename ) {
+        case "fuel1":
+            field_name = "quest_state1";
+            piece_name = "cloth";
+            break;
+        case "fuel2":
+            field_name = "quest_state2";
+            piece_name = "fueltanks";
+            break;
+        case "fuel3":
+            field_name = "quest_state3";
+            piece_name = "engine";
+            break;
+        case "fuel4":
+            field_name = "quest_state4";
+            piece_name = "steering";
+            break;
+        case "fuel5":
+            field_name = "quest_state5";
+            piece_name = "rigging";
+            break;
+    }
+    level thread zm_alcatraz_hud_buildables::players_hud_fuel(self);
+    level clientfield::set( field_name, 6 );
+    if ( !level.is_forever_solo_game || GetPlayers().size > 1) {
+        level clientfield::set( "piece_player_" + piece_name, player.characterIndex + 1 );
+    }
+    self thread ondisconnect_common( player );
 }
-
+ 
 function oncrafted_fuel( player ) {
-	level notify( "crafted_" + self.piecename );
-	level.n_plane_fuel_count++;
-	switch( self.piecename ) {
-		case "fuel1":
-			field_name = "quest_state1";
-			level.plane_fuel1_built = true;
-			break;
-		case "fuel2":
-			field_name = "quest_state2";
-			level.plane_fuel2_built = true;
-			break;
-		case "fuel3":
-			field_name = "quest_state3";
-			level.plane_fuel3_built = true;
-			break;
-		case "fuel4":
-			field_name = "quest_state4";
-			level.plane_fuel4_built = true;
-			break;
-		case "fuel5":
-			field_name = "quest_state5";
-			level.plane_fuel5_built = true;
-			break;
-	}
-	level clientfield::set( field_name, 7 );
-	if ( !level.is_forever_solo_game || GetPlayers().size > 1) {
-		level clientfield::set( "piece_player_" + self.piecename, 0 );
-	}
+    level notify( "crafted_" + self.piecename );
+    level.n_plane_fuel_count++;
+    switch( self.piecename ) {
+        case "fuel1":
+            field_name = "quest_state1";
+            piece_name = "cloth";
+            level.plane_fuel1_built = true;
+            break;
+        case "fuel2":
+            field_name = "quest_state2";
+            piece_name = "fueltanks";
+            level.plane_fuel2_built = true;
+            break;
+        case "fuel3":
+            field_name = "quest_state3";
+            piece_name = "engine";
+            level.plane_fuel3_built = true;
+            break;
+        case "fuel4":
+            field_name = "quest_state4";
+            piece_name = "steering";
+            level.plane_fuel4_built = true;
+            break;
+        case "fuel5":
+            field_name = "quest_state5";
+            piece_name = "rigging";
+            level.plane_fuel5_built = true;
+            break;
+    }
+    level clientfield::set( field_name, 7 );
+    if ( !level.is_forever_solo_game || GetPlayers().size > 1) {
+        level clientfield::set( "piece_player_" + piece_name, 0 );
+    }
 }
 
 function onfullycrafted_plane( player ) {

@@ -29,16 +29,22 @@
 #using scripts\zm\_zm_afterlife;
 #using scripts\zm\_zm_ai_brutus;
 #using scripts\zm\zm_alcatraz_amb;
+#using scripts\zm\zm_alcatraz_visions;
 
 
 #precache( "xmodel", "p6_zm_al_audio_headset_icon" );
 #precache("material", "waypoint_kill_red");
 
+function autoexec init()
+{
+	clientfield::register( "toplayer", "player_listening_to_headset", VERSION_SHIP, 1, "int" );
+}
+
 function onplayerconnect_sq_final() {
 }
 
 function stage_one() {
-	//level thread stage_two();
+	level thread stage_two();
 
 	level flag::wait_till( "quest_completed_thrice" );
 	level flag::wait_till( "spoon_obtained" );
@@ -199,6 +205,13 @@ function nixie_tube_win_effects_all_tubes_final( goal_num_1, goal_num_2, goal_nu
 }
 
 function stage_two() {
+	wait 30;
+	t_plane_fly = GetEnt( "plane_fly_trigger", "targetname" );
+	t_plane_fly TriggerEnable(false);
+	t_plane_fuelable = GetEnt( "plane_fuelable_trigger", "targetname" );
+	t_plane_fuelable TriggerEnable(false);
+	t_plane_fly_afterlife = GetEnt( "plane_fly_afterlife_trigger", "script_noteworthy" );
+	t_plane_fly_afterlife TriggerEnable(true);
 	audio_logs = [];
 	audio_logs[ 0 ] = [];
 	audio_logs[ 0 ][ 0 ] = "vox_guar_tour_vo_1_0";
@@ -224,7 +237,7 @@ function stage_two() {
 	}
 	level.m_headphones Delete();
 	t_plane_fly_afterlife = GetEnt( "plane_fly_afterlife_trigger", "script_noteworthy" );
-	t_plane_fly_afterlife PlaySound( "zmb_laugh_child" );
+	t_plane_fly_afterlife PlaySound( "zmb_spooky_laugh" );
 	trigger_is_on = 0;
 	while ( 1 ) {
 		wait 0.1;
@@ -286,22 +299,55 @@ function play_sq_audio_log( num, a_vo, b_use_trig ) {
 		trigger Delete();
 	}
 	level.m_headphones TriggerEnable(false);
+	PlayFX( level._effect["powerup_grabbed"], level.m_headphones.origin );
+	level.m_headphones Delete();
+
+	dummy_bitch = Spawn( "script_origin", (0, 0, 0) );
+
 	//level setclientfield( "toggle_futz", 1 );
+
+	level.doloopshit = true;
+
 	foreach(player in GetPlayers()) {
-		VisionSetNaked( "zombie_noire", 0.05 ); 
+		player PlaySoundToPlayer("zmb_sq_headset_start", player);
+		player clientfield::set_to_player( "player_listening_to_headset", 1 );
+		player thread doAudioLoop();
+		VisionSetNaked( "zm_alcatraz_bw", 0 ); 
 	}
+
+	wait 1.1;
+
 	i = 0;
 	while ( i < a_vo.size ) {
-		level.m_headphones PlaySoundWithNotify( a_vo[ i ], "at_done" );
-		level.m_headphones waittill( "at_done" );
+		level thread doAudioLoop();
+		dummy_bitch PlaySoundWithNotify( a_vo[ i ], "at_done" );
+		dummy_bitch waittill( "at_done" );
 		wait 0.5;
 		i++;
 	}
-	//level setclientfield( "toggle_futz", 0 );
+
+	level.doloopshit = false;
+
 	foreach(player in GetPlayers()) {
-		VisionSetNaked( "zm_factory" ); 
+		//zm_alcatraz_visions::restore_vision(player);
+		VisionSetNaked( "zm_factory", 0 ); 
+		player StopSound("zmb_sq_headset_loop");
+		player clientfield::set_to_player( "player_listening_to_headset", 0 );
+		player PlaySoundToPlayer("zmb_sq_headset_stop", player);
 	}
-	level.m_headphones Delete();
+
+	dummy_bitch Delete();
+}
+
+function doAudioLoop()
+{
+	wait 1;
+	while(level.doloopshit == true)
+	{
+		self PlaySoundToPlayer("zmb_sq_headset_loop", self);
+		wait 4;
+	}
+	
 }
 
 function final_flight_setup() {
@@ -312,6 +358,7 @@ function final_flight_setup() {
 
 function final_flight_trigger() {
 	t_plane_fly = GetEnt( "plane_fly_trigger", "targetname" );
+	t_plane_fly TriggerEnable(false);
 	self SetCursorHint( "HINT_NOICON" );
 	self SetHintString( "" );
 	while ( 1 ) {
@@ -357,6 +404,10 @@ function final_flight_trigger() {
 function final_flight_player_thread()
 {
 	self endon( "death_or_disconnect" );
+	self AllowStand( 1 );
+	self AllowCrouch( 1 );
+	self AllowProne( 1 );
+	self AllowSlide( 1 );
 	self.on_a_plane = 1;
 	self.dontspeak = 1;
 	//self setclientfieldtoplayer( "isspeaking", 1 );
@@ -396,6 +447,8 @@ function final_flight_player_thread()
 	t_plane_fly SetHintString( str_hint_string );
 	self PlayerLinkToDelta( m_plane_craftable, "tag_player_crouched_" + ( self.n_passenger_index + 1 ) );
 	self AllowCrouch( 1 );
+	self AllowProne( 0 );
+	self AllowSlide( 0 );
 	self AllowStand( 0 );
 	self util::clientnotify( "sndFFCON" );
 	level flag::wait_till( "plane_departed" );
@@ -523,30 +576,32 @@ function stage_final() {
 	}
 	level.brutus_respawn_after_despawn = 0;
 	level thread clean_up_final_brutuses();
+	level.easter_egg_completed = true;
 	wait 2;
-	if ( level.winner == "weasel" ) 	{
+	if ( level.winner == "weasel" ) {
+		level.custom_intermission = &player_intermission_bridge;
 		foreach(player in GetPlayers()) {
 			player FreezeControls( 1 );
 			//player maps/mp/zombies/_zm_stats::increment_client_stat( "prison_ee_good_ending", 0 );
 			player thread lui::screen_flash( 0.5, 5, 0, 1, "white" );
 			player create_ending_message( "THE CYCLE IS BROKEN." );
 			player.client_hint.sort = 55;
-			player.client_hint.color = ( 1, 1, 1 );
-			PlaySoundAtPosition( "zmb_quest_final_white_good", ( 1, 1, 1 ) );
+			player.client_hint.color = ( 0, 0, 0 );
+			player PlaySoundToPlayer("mus_whitescreen", player);
+			//PlaySoundAtPosition( "zmb_quest_final_white_good", ( 1, 1, 1 ) );
 			level.sndgameovermusicoverride = "game_over_final_good";
 		}
-		level.custom_intermission = &player_intermission_bridge;
 	}
 	else {
-		a_players = GetPlayers();
 		foreach(player in GetPlayers()) {
 			player FreezeControls( 1 );
 			//player maps/mp/zombies/_zm_stats::increment_client_stat( "prison_ee_bad_ending", 0 );
 			player thread lui::screen_flash( 0.5, 5, 0, 1, "white" );
 			player create_ending_message( "THE CYCLE CONTINUES..." );
 			player.client_hint.sort = 55;
-			player.client_hint.color = ( 1, 1, 1 );
-			PlaySoundAtPosition( "zmb_quest_final_white_bad", ( 1, 1, 1 ) );
+			player.client_hint.color = ( 0, 0, 0 );
+			player PlaySoundToPlayer("mus_whitescreen", player);
+			//PlaySoundAtPosition( "zmb_quest_final_white_bad", ( 1, 1, 1 ) );
 			level.sndgameovermusicoverride = "game_over_final_bad";
 		}
 	}
@@ -785,6 +840,7 @@ function player_intermission_bridge() {
 function create_ending_message( str_msg ) {
 	if ( !isdefined( self.client_hint ) ) {
 		self.client_hint = NewClientHudElem( self );
+		self.client_hint.color = ( 0, 0, 0 );
 		self.client_hint.alignx = "center";
 		self.client_hint.aligny = "middle";
 		self.client_hint.horzalign = "center";
@@ -801,7 +857,6 @@ function create_ending_message( str_msg ) {
 		self.client_hint.alpha = 1;
 		self.client_hint.foreground = 1;
 		self.client_hint.hidewheninmenu = 1;
-		self.client_hint.color = ( 1, 1, 1 );
 	}
 	self.client_hint SetText( str_msg );
 }

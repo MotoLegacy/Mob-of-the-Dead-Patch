@@ -374,7 +374,7 @@ function create_key_door_unitrigger( piece_num, width, height, length )
 	t_key_door.unitrigger_stub.origin = t_key_door.origin;
 	t_key_door.unitrigger_stub.angles = t_key_door.angles;
 	t_key_door.unitrigger_stub.script_unitrigger_type = "unitrigger_box_use";
-	t_key_door.unitrigger_stub.hint_string = "Need A Key";
+	t_key_door.unitrigger_stub.hint_string = "Need Warden's Key";
 	t_key_door.unitrigger_stub.cursor_hint = "HINT_NOICON";
 	t_key_door.unitrigger_stub.script_width = width;
 	t_key_door.unitrigger_stub.script_height = height;
@@ -398,7 +398,7 @@ function key_door_trigger_visibility( player )
 	self SetInvisibleToPlayer( player, b_is_invis );
 	if( level.key_found )
 	{
-		self SetHintString( "Hold ^3&&1^7 to Use Key" );
+		self SetHintString( "Hold ^3&&1^7 to open" );
 	}
 	else
 	{
@@ -625,7 +625,7 @@ function setup_dryer_challenge()
 {
 	t_dryer = GetEnt( "dryer_trigger", "targetname" );
 	t_dryer SetCursorHint( "HINT_NOICON" );
-	t_dryer SetHintString( "Hold ^3&&1^7 to Activate Dryer" );
+	t_dryer SetHintString( "Hold ^3&&1^7 to activate Laundry Machine" );
 	t_dryer thread dryer_trigger_thread();
 	t_dryer thread dryer_zombies_thread();
 	t_dryer TriggerEnable(false);
@@ -634,7 +634,8 @@ function setup_dryer_challenge()
 	IPrintLnBold( "dryer can now be activated" );
 #/
 	t_dryer TriggerEnable(true);
-	t_dryer PlaySound( "evt_dryer_rdy_bell" );
+	PlaySoundAtPosition("evt_dryer_rdy_bell", t_dryer.origin);
+	//t_dryer PlaySound( "evt_dryer_rdy_bell" );
 	wait 1;
 	players = GetPlayers();
 	_a900 = players;
@@ -664,7 +665,23 @@ function dryer_trigger_thread()
 	n_dryer_cycle_duration = 30;
 	a_dryer_spawns = [];
 	sndent = Spawn( "script_origin", ( 1613, 10599, 1203 ) );
-	self waittill( "trigger" );
+
+	can_activate = 0;
+
+	while(can_activate == 0)
+	{
+		self waittill( "trigger", player );
+
+		if ( isdefined( player.afterlife ) && player.afterlife )
+		{
+			can_activate = 0;
+		}
+		else
+		{
+			can_activate = 1;
+		}
+	}
+
 	self TriggerEnable(false);
 	level.fog_fx_laundry = [];
 	level thread spawn_laundry_fog();
@@ -672,6 +689,11 @@ function dryer_trigger_thread()
 	m_dryer_model AnimScripted( "optionalNotify", m_dryer_model.origin , m_dryer_model.angles, %fxanim_zom_al_industrial_dryer_start_anim);
 	dryer_playerclip = GetEnt( "dryer_playerclip", "targetname" );
 	dryer_playerclip MoveTo( dryer_playerclip.origin + vectorScale( ( 0, 0, 0 ), 104 ), 0.05 );
+
+	// laugh and al death (notifier)
+	//level.zmb_laugh_alias
+	player PlaySoundToPlayer( "zmb_spooky_laugh", player );
+	player PlaySoundToPlayer( "zmb_afterlife_end", player );
 
 	collision1 = Spawn("script_model", (2079, -1370, 5607), 1);
 	collision1 SetModel("zm_collision_perks1");
@@ -699,9 +721,10 @@ function dryer_trigger_thread()
 		level thread zm_alcatraz_amb::sndplaystinger( "laundry_defend" );
 	//}
 	exploder::exploder( 1000 );
-	sndent thread snddryercountdown( n_dryer_cycle_duration );
-	sndent PlaySound( "evt_dryer_start" );
-	sndent PlayLoopSound( "evt_dryer_lp" );
+	self thread snddryercountdown( n_dryer_cycle_duration );
+	PlaySoundAtPosition("evt_dryer_start", self.origin);
+	//sndent PlaySound( "evt_dryer_start" );
+	self PlayLoopSound( "evt_dryer_lp" );
 	level util::clientnotify( "fxanim_dryer_start" );
 	level flag::set( "dryer_cycle_active" );
 	wait (GetAnimLength( %fxanim_zom_al_industrial_dryer_start_anim ));
@@ -725,8 +748,9 @@ function dryer_trigger_thread()
 	dryer_playerclip = GetEnt( "dryer_playerclip", "targetname" );
 	dryer_playerclip Delete();
 	level thread delete_laundry_fog();
-	sndent StopLoopSound();
-	sndent PlaySound( "evt_dryer_stop" );
+	self StopLoopSound();
+	PlaySoundAtPosition("evt_dryer_stop", self.origin);
+	//sndent PlaySound( "evt_dryer_stop" );
 	if ( isdefined( sndset ) && sndset )
 	{
 		level.music_override = 0;
@@ -952,11 +976,13 @@ function snddryercountdown( num )
 	{
 		if ( i <= 10 )
 		{
-			ent PlaySound( "zmb_quest_nixie_count_final" );
+			PlaySoundAtPosition( "zmb_quest_nixie_count_final", ent.origin );
+			//ent PlaySound( "zmb_quest_nixie_count_final" );
 		}
 		else
 		{
-			ent PlaySound( "zmb_quest_nixie_count" );
+			PlaySoundAtPosition( "dryer_click", ent.origin );
+			//ent PlaySound( "zmb_quest_nixie_count" );
 		}
 		wait 1;
 		i--;
@@ -1165,7 +1191,7 @@ function toggle_inner_gate( n_gate_move_duration )
 function plane_fly_trigger_thread()
 {
 	self SetCursorHint( "HINT_NOICON" );
-	self SetHintString( "Hold ^3&&1^7 to takeoff plane" );
+	self SetHintString( "Hold ^3&&1^7 to Board Plane" );
 	//level flag::wait_till( "initial_players_connected" );
 	//flag::wait_till( "brutus_setup_complete" );
 	self TriggerEnable(false);
@@ -1174,7 +1200,7 @@ function plane_fly_trigger_thread()
 	//IPrintLnBold("hide plane");
 	m_plane_craftable = GetEnt( "plane_craftable", "targetname" );
 	m_plane_craftable Show();
-	m_plane_craftable HidePart( "tag_support_upper" );
+	/*m_plane_craftable HidePart( "tag_support_upper" );
 	m_plane_craftable HidePart( "tag_wing_skins_up" );
 	m_plane_craftable HidePart( "tag_engines_up" );
 	m_plane_craftable HidePart( "tag_feul_tanks" );
@@ -1182,7 +1208,7 @@ function plane_fly_trigger_thread()
 	m_plane_craftable HidePart( "tag_engine_ground" );
 	m_plane_craftable HidePart( "tag_clothes_ground" );
 	m_plane_craftable HidePart( "tag_fuel_hose" );
-	level waittill("plane_fully_build");
+	level waittill("plane_fully_build");*/
 	//IPrintLnBold("plane crafted");
 	zm_ai_brutus::transfer_plane_trigger( "build", "fly" );
 	self TriggerEnable(true);
@@ -1245,6 +1271,8 @@ function plane_boarding_thread()
 	veh_plane_flyable = GetEnt( "plane_flyable", "targetname" );
 	t_plane_fly = GetEnt( "plane_fly_trigger", "targetname" );
 	t_plane_fly SetHintString( "Hold ^3&&1^7 to Board Plane" );
+	self AllowCrouch( 1 );
+	self SetCharacterBodyStyle(1);
 	self EnableInvulnerability();
 	self PlayerLinkToDelta( m_plane_craftable, "tag_player_crouched_" + ( self.n_passenger_index + 1 ) );
 	self AllowStand( 0 );
@@ -1271,6 +1299,7 @@ function plane_boarding_thread()
 	str_current_weapon = self GetCurrentWeapon();
 	self GiveWeapon( GetWeapon("falling_hands") );
 	self SwitchToWeaponImmediate( GetWeapon("falling_hands") );
+	self SetCharacterBodyStyle(0);
 	players = GetPlayers();
 	_a1548 = players;
 	_k1548 = GetFirstArrayKey( _a1548 );

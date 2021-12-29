@@ -328,14 +328,12 @@ function wolfhead_depart( rune )
 
 function wolf_state_7(index)
 {
+	level.wolf_runes[index] PlayLoopSound( "evt_runeglow_loop" );
 	level.wolf_heads[index] Hide();
 	level.wolf_runes[index] Show();
 	level.wolf_bodies[index] Hide();
 	level.wolf_bodies[index].head Hide();
 	level.wolf_bodies[index].head.hat Hide();
-	level.wolf_runes[index] SetModel( "p6_zm_al_dream_catcher_on" );
-	PlayFXOnTag(  level._effect["soul_charged"], level.wolf_runes[index], "tag_origin" );
-	level.wolf_runes[index] PlayLoopSound( "evt_runeglow_loop" );
 }
 
 function wolf_state_eat(index , n_eating_anim ,zombie)
@@ -445,6 +443,8 @@ function grief_soul_catcher_state_manager( index )
 			level thread wolf_state_2(index);
 			self util::waittill_either( "fully_charged", "finished_eating" );
 		}
+		level.wolf_runes[index] SetModel( "p6_zm_al_dream_catcher_on" );
+		PlayFXOnTag(  level._effect["soul_charged"], level.wolf_runes[index], "tag_origin" );
 		level thread wolf_state_6(index);
 		anim_length = GetAnimLength( %o_zombie_dreamcatcher_outtro );
 		wait anim_length;
@@ -578,7 +578,7 @@ function watch_for_death()
 			{
 				return;
 			}
-			if(!isdefined(self))
+			if(!isdefined(self) || (isdefined(self.did_bleed_out) && self.did_bleed_out == true ))
 			{
 				return;
 			}
@@ -918,11 +918,12 @@ function tomahawk_upgrade_quest()
 	{
 		self waittill( "got_a_tomahawk_kill" );
 		self.tomahawk_upgrade_kills++;
+		//IPrintLnBold("kill: " + self.tomahawk_upgrade_kills);
 	}
 	wait 1;
 	level thread zm_alcatraz_amb::sndplaystinger( "quest_generic" );
 	e_org = Spawn( "script_origin", self.origin + vectorScale( ( 0, 0, 1 ), 64 ) );
-	e_org PlaySoundWithNotify( "zmb_easteregg_scream", "easteregg_scream_complete" );
+	e_org PlaySoundWithNotify( "zmb_afterlife_end", "easteregg_scream_complete" );
 	e_org waittill( "easteregg_scream_complete" );
 	e_org Delete();
 	while ( level.round_number < 10 )
@@ -956,7 +957,7 @@ function tomahawk_upgrade_quest()
 	}
 	level thread zm_alcatraz_amb::sndplaystinger( "quest_generic" );
 	e_org = Spawn( "script_origin", self.origin + vectorScale( ( 0, 0, 1 ), 64 ) );
-	e_org PlaySoundWithNotify( "zmb_easteregg_scream", "easteregg_scream_complete" );
+	e_org PlaySoundWithNotify( "zmb_afterlife_end", "easteregg_scream_complete" );
 	e_org waittill( "easteregg_scream_complete" );
 	e_org Delete();
 	self notify( "hellhole_time" );
@@ -976,7 +977,7 @@ function tomahawk_upgrade_quest()
 	self notify( "tomahawk_upgraded_swap" );
 	level thread zm_alcatraz_amb::sndplaystinger( "quest_generic" );
 	e_org = Spawn( "script_origin", self.origin + vectorScale( ( 0, 0, 1 ), 64 ) );
-	e_org PlaySoundWithNotify( "zmb_easteregg_scream", "easteregg_scream_complete" );
+	e_org PlaySoundWithNotify( "zmb_afterlife_end", "easteregg_scream_complete" );
 	e_org waittill( "easteregg_scream_complete" );
 	e_org Delete();
 	level waittill( "end_of_round" );

@@ -1,5 +1,5 @@
 <p align="center"><img src="images/icon.png" width="200"></p> 
-<h2 align="center"><b>Mob of the Dead Remastered Patch 1.3.2</b></h2>
+<h2 align="center"><b>Mob of the Dead Remastered Patch 1.4.2</b></h2>
 <h4 align="center">A Patch for the Mob of the Dead Remastered Workshop Item</h4>
 <hr>
 <p align="center">
@@ -21,7 +21,7 @@
 <hr>
 
 # About
-The following is the source/modtree, excluding raw audio and images, for the Call of Duty: Black Ops III Steam Workshop Item [Mob of the Dead Remastered Patch](https://steamcommunity.com/sharedfiles/filedetails/?id=1725568279), version 1.3.2. The repository will be updated to version 1.4.2 (latest) when possible.
+The following is the source/modtree, excluding raw audio and images, for the Call of Duty: Black Ops III Steam Workshop Item [Mob of the Dead Remastered Patch](https://steamcommunity.com/sharedfiles/filedetails/?id=1725568279), version 1.4.2. This is the last published version.
 
 <hr>
 
@@ -32,7 +32,7 @@ All original source files are licensed under the [MIT License](https://opensourc
 
 # Credits
 
-These are the credits specific to this patch, you can find the credits for the entire project, [Mob of The Dead Remastered](https://steamcommunity.com/workshop/filedetails/?id=1128166280), by clicking [here](extended_credits.txt).
+These are the credits **specific to this patch**, you can find the credits for the entire project, [Mob of The Dead Remastered](https://steamcommunity.com/workshop/filedetails/?id=1128166280), by clicking [here](extended_credits.txt).
 <ul>
     <li>JariKCoding - LUI, Scripting, and General Assistance.</li>
     <li>Scobalula - Greyhound, HydraX, Husky, Attempts to overcome Asset Limits.</li>

@@ -231,7 +231,7 @@ function snddefendeventscreams()
 	while(1)
 	{
 		level waittill( "sndFF" );
-		PlaySound( 0, "zmb_easteregg_scream", ( 2233, 10345, 1224 ) );
+		PlaySound( 0, "zmb_afterlife_end", ( 2233, 10345, 1224 ) );
 		wait 1;
 		PlaySound( 0, "zmb_easteregg_laugh", ( 1597, 10068, 1228 ) );
 	}

@@ -157,6 +157,8 @@ function main()
 
     zm_usermap::main();
 
+    level zm_usermap::perk_init();
+
     callback::on_spawned(&give_knife);
 
     callback::on_spawned( &bo2_deathhands );
@@ -164,6 +166,7 @@ function main()
     
     startingWeapon = "bo3_m1911";
     weapon = getWeapon(startingWeapon);
+    level.easter_egg_completed = false;
     level.start_weapon = (weapon);
     level._zombie_custom_add_weapons =&custom_add_weapons;
     
@@ -197,6 +200,19 @@ function main()
     level thread zm_perks::spare_change();
     level thread permapowerup();
     level thread fix_door_sounds();
+    level thread gondola_poi();
+
+    /*foreach(player in GetPlayers())
+    {
+        VisionSetNaked("zm_alcatraz_cellblock", 0);
+        player.vision_updated = 1;
+    }*/
+}
+
+function gondola_poi()
+{
+    gondola_point = Spawn( "script_origin", (545.878, -2324.34, 5824.69) );
+    gondola_point.targetname = "gondola_poi";
 }
 
 function fix_door_sounds()

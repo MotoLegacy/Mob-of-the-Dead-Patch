@@ -6048,7 +6048,27 @@ function end_game()
 
 	util::clientnotify( "zesn" );
 	
-	level thread zm_audio::sndMusicSystem_PlayState( "game_over" );
+	//level thread zm_audio::sndMusicSystem_PlayState( "game_over" );
+
+	level.eatmelol = false;
+
+	foreach(player in GetPlayers())
+	{
+		if (level.easter_egg_completed == true)
+		{
+			if (level.winner == "weasel")
+				player PlaySoundToPlayer("mus_final_good", player);
+			else
+				player PlaySoundToPlayer("mus_final_bad", player);
+		}
+		else
+		{
+			level.eatmelol = true;
+		}
+	}
+
+	if (level.eatmelol == true)
+		level thread zm_audio::sndMusicSystem_PlayState( "game_over" );
 	
 	//AYERS: Turn off ANY last stand audio at the end of the game
 	players = GetPlayers();
@@ -6125,7 +6145,11 @@ function end_game()
 				game_over[i].alpha = 0;
 				game_over[i].color = ( 1.0, 1.0, 1.0 );
 				game_over[i].hidewheninmenu = true;
-				game_over[i] SetText( &"ZOMBIE_GAME_OVER" );
+
+				if (level.easter_egg_completed == true)
+					game_over[i] SetText("LIFE OVER");
+				else
+					game_over[i] SetText( &"ZOMBIE_GAME_OVER" );
 	
 				game_over[i] FadeOverTime( 1 );
 				game_over[i].alpha = 1;
@@ -6735,6 +6759,8 @@ function player_intermission()
 
 			self notify("player_intermission_spawned");
 			
+			//self MoveTo( point.origin + (0, -100, 0), 20, 20 );
+
 			if ( IsDefined(nextpoint) )
 			{
 				self zm_utility::create_streamer_hint( nextpoint.origin, nextpoint.angles, INTERMISSION_STREAMER_HINT_PRIORITY );

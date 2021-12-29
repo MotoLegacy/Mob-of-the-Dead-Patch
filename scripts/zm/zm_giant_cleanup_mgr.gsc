@@ -239,6 +239,7 @@ function private delete_zombie_noone_looking()
 	
 	self zombie_utility::reset_attack_spot();
 	self Kill(); 
+	self.did_bleed_out = true;
 	wait( 0.05 );	// allow death to process
 	
 	if ( isdefined( self ) )

@@ -6,6 +6,7 @@
 #using scripts\shared\audio_shared;
 #using scripts\shared\util_shared;
 #using scripts\shared\postfx_shared;
+#using scripts\zm\zm_prison_sq_final;
 
 #using scripts\zm\_filter;
 
@@ -94,6 +95,7 @@ function toggle_player_afterlife( localclientnum, oldval, newval, bnewent, binit
 		//self thread afterlife_mana_rumble();
 		self thread afterlife_damage_fx();
 		self thread sndafterlifeleak( localclientnum );
+		self thread afterlife_ambientroom( localclientnum );
 	}
 	else
 	{
@@ -102,6 +104,15 @@ function toggle_player_afterlife( localclientnum, oldval, newval, bnewent, binit
 		self notify( "stop_damage_fx" );
 		self notify( "sndEndLeak" );
 	}
+}
+
+function afterlife_ambientroom(localclientnum)
+{
+	self endon( "disconnect" );
+	level waittill( "al_e", localclientnum);
+	ForceAmbientRoom("sndHealth_LowHealth");
+	level waittill( "al_l", localclientnum);
+	ForceAmbientRoom("");
 }
 
 function afterlife_damage_fx()

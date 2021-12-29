@@ -153,7 +153,7 @@ function zipline_call_trigger_think()
 		self SetHintString( "" );
 		level flag::wait_till( "gondola_at_" + str_gondola_loc );
 		self notify( "available" );
-		self SetHintString( "Press &&1 to call gondola" );
+		self SetHintString( "Press ^3&&1^7 to call gondola" );
 		self waittill( "trigger", who );
 		if ( who zm_utility::in_revive_trigger() )
 		{
@@ -337,13 +337,13 @@ function zipline_move_trigger_think()
 	while ( 1 )
 	{
 		level flag::wait_till( "gondola_at_" + self.script_string );
-		self SetHintString( "Press &&1 to use gondola [Cost: "+self.cost+"]" );
+		self SetHintString( "Press ^3&&1^7 to use Gondola [Cost: "+self.cost+"]" );
 		self waittill( "trigger", who );
 		if ( who zm_utility::in_revive_trigger() )
 		{
 			wait 0.05;
 			continue;
-		}
+		} 
 		if ( !isDefined( self.is_available ) )
 		{
 			wait 0.05;
@@ -821,12 +821,12 @@ function gondola_cooldown()
 	a_t_call = GetEntArray( "gondola_call_trigger", "targetname" );
 	foreach(trigger in a_t_call)
 	{
-		trigger SetHintString( "Gondola is cooling down" );
+		trigger SetHintString( "The Gondola is recharging" );
 	}
 	a_t_move = GetEntArray( "gondola_move_trigger", "targetname" );
 	foreach(trigger in a_t_move)
 	{
-		trigger SetHintString( "Gondola is cooling down" );
+		trigger SetHintString( "The Gondola is recharging" );
 	}
 	wait 10;
 	gondola_lights_green();
@@ -846,6 +846,7 @@ function link_player_to_gondola()
 		e_origin.angles = self.angles;
 		level.hm_link_origins[ level.hm_link_origins.size ] = e_origin;
 		e_origin LinkTo( level.e_gondola );
+		//IPrintLnBold("on gondola");
 		self PlayerLinkTo( e_origin );
 	}
 }

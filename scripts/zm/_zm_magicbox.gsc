@@ -675,10 +675,11 @@ function treasure_chest_think()
 	user zm_stats::increment_challenge_stat( "SURVIVALIST_BUY_MAGIC_BOX" );
 	user zm_daily_challenges::increment_magic_box();
 	
-	if ( isDefined( level._magic_box_used_VO ) )
+	/*if ( isDefined( level._magic_box_used_VO ) )
 	{
 		user thread [[ level._magic_box_used_VO ]]();
-	}
+	}*/
+	user zm_utility::do_player_general_vox( "general", "box_use", undefined, 100 );
 	
 	self thread watch_for_emp_close();
 	if ( isDefined( level.using_locked_magicbox ) && level.using_locked_magicbox )

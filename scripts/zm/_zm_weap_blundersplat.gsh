@@ -36,11 +36,11 @@ AllModz
 	
 // SETTINGS
 // ======================================================================================================
-#define BLUNDERGAT_WEAPONFILE					"shotgun_blundergat"
-#define BLUNDERGAT_UPGRADED_WEAPONFILE			"shotgun_blundergat_upgraded"
-#define BLUNDERSPLAT_WEAPONFILE					"shotgun_acidgat"
-#define BLUNDERSPLAT_UPGRADED_WEAPONFILE		"shotgun_acidgat_upgraded"
-#define BLUNDERSPLAT_PROJECTILE_WEAPONFILE		"shotgun_acidgat_bullet"
+#define BLUNDERGAT_WEAPONFILE					"bo2_blundergat"
+#define BLUNDERGAT_UPGRADED_WEAPONFILE			"bo2_blundergat_upgraded"
+#define BLUNDERSPLAT_WEAPONFILE					"bo2_acidgat"
+#define BLUNDERSPLAT_UPGRADED_WEAPONFILE		"bo2_acidgat_upgraded"
+#define BLUNDERSPLAT_PROJECTILE_WEAPONFILE		"bo2_acidgat_bullet"
 	
 // FX
 // ======================================================================================================

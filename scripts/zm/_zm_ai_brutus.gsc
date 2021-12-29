@@ -322,6 +322,7 @@ function magicboxLock() {
 		return;
 	magic_box.zbarrier _zm_magicbox_prison::set_magic_box_zbarrier_state( "locking" );
 	self PlaySound( "zmb_brutus_clang" );
+	self thread sndBrutusVox( "zmb_vocals_brutus_lockbox" );
     self.priority_item.is_locked = true;
 	magic_box.locked_cost = getScalingLockCost( "magic_box", magic_box );
 	level.lockdown_track[ "magic_box" ] = 1;

@@ -34,6 +34,7 @@ function include_craftables()
 function register_clientfields()
 {
 	visionset_mgr::register_visionset_info( "afterlife", 9000, 1, "afterlife", "afterlife" );
+
 	//visionset_mgr::register_overlay_info_style_filter( "afterlife_filter", 9000, 1, 5, 0, "generic_filter_afterlife_alcatraz" );
 
 	bits = 1;

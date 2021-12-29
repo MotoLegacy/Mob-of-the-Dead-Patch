@@ -37,6 +37,7 @@
 #using scripts\zm\_zm_spawner;
 #using scripts\zm\_zm_zonemgr;
 #using scripts\zm\craftables\_zm_craftables;
+#using scripts\zm\_zm_afterlife;
 
 #using scripts\zm\zm_prison_weap_quest;
 #using scripts\zm\zm_alcatraz_sq_vo;
@@ -372,6 +373,26 @@ function print_origin()
 	}
 }
 
+function body_testing()
+{
+	body = 0;
+	while(1)
+	{
+		if (body == 0)
+		{
+			IPrintLnBold("hide");
+			body = 1;
+		}
+		else
+		{
+			IPrintLnBold("show");
+			body = 0;
+		}
+		self SetCharacterBodyStyle(body);
+		wait 2;
+	}
+}
+
 function init_level_specific_audio()
 {
 	level.oh_shit_vo_cooldown = 0;
@@ -393,14 +414,21 @@ function init_level_specific_audio()
     foreach(player in GetPlayers())
 	{
         // Dev mode
-		/*if (player.name == "MotoLegacy" || player.name == "JariK") {
+		if (player.name == "MotoLegacy" || player.name == "JariK") {
 			player.score = 100000;
-			//player.af_lives = 999;
+			player.af_lives = -1;
+			player _zm_afterlife::afterlife_infinite_mana( 1 );
 			player thread print_origin();
-		}*/
+			//player thread body_testing();
+
+			//player GiveWeapon(level.weaponRiotshield);
+		}
 
 		// Fix the dumb extra 8 rounds in colt
 		player SetWeaponAmmoStock(level.start_weapon, 32);
+		wait 1;
+		player setClientUIVisibilityFlag( "hud_visible", 1 );
+		player setClientUIVisibilityFlag( "weapon_hud_visible", 1 );
 	}
     // END SPAWN FIXES
 	level notify( "Pack_A_Punch_on" );
@@ -412,96 +440,6 @@ function init_level_specific_audio()
 	level.custom_kill_damaged_vo = &zm_audio::custom_kill_damaged_vo;
 	level._custom_zombie_oh_shit_vox_func = &alcatraz_custom_zombie_oh_shit_vox;
 	level.gib_on_damage = &alcatraz_custom_crawler_spawned_vo;
-	/*alcatraz_add_player_dialogue( "player", "general", "no_money_weapon", "nomoney_generic", undefined );
-	alcatraz_add_player_dialogue( "player", "general", "no_money_box", "nomoney_generic", undefined );
-	alcatraz_add_player_dialogue( "player", "general", "perk_deny", "nomoney_generic", undefined );
-	alcatraz_add_player_dialogue( "player", "perk", "specialty_armorvest", "perk_generic", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "perk", "specialty_fastreload", "perk_generic", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "perk", "specialty_doubletap2", "perk_generic", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "perk", "specialty_deadshot", "perk_generic", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "perk", "specialty_electriccherry", "perk_generic", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "kill", "close", "kill_close", undefined, 15 );
-	alcatraz_add_player_dialogue( "player", "kill", "bullet", "kill_damaged", undefined, 50 );
-	alcatraz_add_player_dialogue( "player", "kill", "headshot", "kill_headshot", "resp_kill_headshot", 25 );
-	alcatraz_add_player_dialogue( "player", "kill", "headshot_respond_to_plr_0", "headshot_respond_to_plr_0", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "kill", "headshot_respond_to_plr_1", "headshot_respond_to_plr_1", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "kill", "headshot_respond_to_plr_2", "headshot_respond_to_plr_2", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "kill", "headshot_respond_to_plr_3", "headshot_respond_to_plr_3", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "kill", "headshot_respond_generic", "headshot_respond_generic", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "kill", "retriever", "kill_retriever", undefined, 15 );
-	alcatraz_add_player_dialogue( "player", "kill", "redeemer", "kill_redeemer", undefined, 15 );
-	alcatraz_add_player_dialogue( "player", "kill", "blundergat", "kill_blundergat", undefined, 15 );
-	alcatraz_add_player_dialogue( "player", "kill", "acidgat", "kill_acidgat", undefined, 15 );
-	alcatraz_add_player_dialogue( "player", "kill", "death_machine", "kill_death_machine", undefined, 15 );
-	alcatraz_add_player_dialogue( "player", "kill", "wolf_kill", "wolf_kill", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "achievement", "earn_acheivement", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "revive_up", "heal_revived", "revive_player", 100 );
-	alcatraz_add_player_dialogue( "player", "general", "revive_player", "revive_player", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "exert_sigh", "exert_sigh", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "exert_laugh", "exert_laugh", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "pain_high", "pain_high", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "build_pickup", "build_pickup", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "build_swap", "build_swap", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "build_add", "build_add", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "build_final", "build_final", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "build_bsm_pickup", "build_bsm_pickup", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "build_bsm_final", "build_bsm_final", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "player_recieves_blundersplat", "build_bsm_plc", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "build_zs_pickup", "build_zs_pickup", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "build_zs_final", "build_zs_final", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "build_zs_plc", "build_zs_plc", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "reboard", "rebuild_boards", undefined, 50 );
-	alcatraz_add_player_dialogue( "player", "general", "discover_box", "discover_box", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "discover_wall_buy", "discover_wall_buy", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "generic_wall_buy", "generic_wall_buy", undefined, 25 );
-	alcatraz_add_player_dialogue( "player", "general", "wpck_pap", "wpck_pap", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "portal_clue", "portal_clue", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "killswitch_clue", "killswitch_clue", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "power_off", "power_off", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "power_on", "power_on", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "electric_zap", "electric_zap", undefined, 25 );
-	alcatraz_add_player_dialogue( "player", "general", "need_electricity", "need_electricity", undefined, 25 );
-	alcatraz_add_player_dialogue( "player", "general", "use_gondola", "use_gondola", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "discover_trap", "discover_trap", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "start_trap", "start_trap", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "surrounded_respond_to_plr_0", "surrounded_respond_to_plr_0", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "surrounded_respond_to_plr_1", "surrounded_respond_to_plr_1", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "surrounded_respond_to_plr_2", "surrounded_respond_to_plr_2", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "surrounded_respond_to_plr_3", "surrounded_respond_to_plr_3", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "wolf_complete", "wolf_complete", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "wolf_final", "wolf_final", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "wolf_encounter", "wolf_encounter", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "brutus_encounter", "brutus_encounter", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "brutus_arrival", "brutus_arrival", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "brutus_reaction", "brutus_reaction", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "general", "brutus_defeated", "brutus_defeated", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "find_map", "find_map", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "response_map", "response_map", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_key", "sidequest_key", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_key_response", "sidequest_key_response", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_sheets", "sidequest_sheets", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_valves", "sidequest_valves", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_engine", "sidequest_engine", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_rigging", "sidequest_rigging", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_oxygen", "sidequest_oxygen", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_parts1_prog", "sidequest_parts1_prog", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_parts2_prog", "sidequest_parts2_prog", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_parts3_prog", "sidequest_parts3_prog", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_parts4_prog", "sidequest_parts4_prog", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_all_parts", "sidequest_all_parts", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "sidequest_roof_nag", "sidequest_roof_nag", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "build_plane", "build_plane", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "plane_takeoff", "plane_takeoff", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "plane_flight", "plane_flight", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "plane_crash", "plane_crash", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "free_fall", "free_fall", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "zombie_arrive_gg", "zombie_arrive_gg", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "chair_electrocution", "chair_electrocution", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "fuel_pickup", "fuel_pickup", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "start_2", "start_2", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "pick_up_easter_egg", "pick_up_egg", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "secret_poster", "secret_poster", undefined, 100 );
-	alcatraz_add_player_dialogue( "player", "quest", "find_secret", "find_secret", undefined, 100 );*/
 }
 
 function alcatraz_add_player_dialogue( speaker, category, type, alias, response, chance )
@@ -532,18 +470,30 @@ function alcatraz_audio_get_mod_type_override( impact, mod, weapon, zombie, inst
 			//}
 		}
 	}
-	if ( weapon.name == "shotgun_blundergat" || weapon.name == "shotgun_blundergat_upgraded" )
+
+	/*if ( zombie.damagemod == "MOD_GRENADE" || zombie.damagemod == "MOD_GRENADE_SPLASH" ) {
+		if ( zombie.damageweapon.name == "bo2_acidgat_bullet" ) {
+			if ( IsPlayer( zombie.attacker ) ) {
+				IPrintLnBold("AAAAA");
+			}
+		}
+	}*/
+
+	if ( weapon.name == "bo2_blundergat" || weapon.name == "bo2_blundergat_upgraded" )
 	{
+		//IPrintLnBold("blunder");
 		a_str_mod[ a_str_mod.size ] = "blundergat";
 	}
-	if ( weapon.name == "shotgun_acidgat" || weapon.name == "shotgun_acidgat_upgraded" )
+	/*if ( weapon.name == "bo2_acidgat" || weapon.name == "bo2_acidgat_upgraded" )
 	{
+		IPrintLnBold("acid");
 		a_str_mod[ a_str_mod.size ] = "acidgat";
 	}
-	if ( isdefined( zombie.damageweapon ) && zombie.damageweapon == "shotgun_acidgat_bullet" )
+	if ( isdefined( zombie.damageweapon ) && zombie.damageweapon == "bo2_acidgat_bullet" )
 	{
+		IPrintLnBold("acid");
 		a_str_mod[ a_str_mod.size ] = "acidgat";
-	}
+	}*/
 	if ( isdefined( zombie.damageweapon.name ) && zombie.damageweapon.name == "zombie_tomahawk" )
 	{
 		a_str_mod[ a_str_mod.size ] = "retriever";
@@ -1111,23 +1061,23 @@ function play_vo_category_on_closest_player( category, type )
 
 function check_for_special_weapon_limit_exist( weapon )
 {
-	if ( weapon.name != "shotgun_blundergat" && weapon.name != "minigun_alcatraz" )
+	if ( weapon.name != "bo2_blundergat" && weapon.name != "minigun_alcatraz" )
 	{
 		return 1;
 	}
 	players = GetPlayers();
 	count = 0;
-	if ( weapon.name == "shotgun_blundergat" )
+	if ( weapon.name == "bo2_blundergat" )
 	{
-		if ( self zm_weapons::has_weapon_or_upgrade( "shotgun_acidgat" ) )
+		if ( self zm_weapons::has_weapon_or_upgrade( "bo2_acidgat" ) )
 		{
 			return 0;
 		}
-		if ( self afterlife_weapon_limit_check( "shotgun_blundergat" ) )
+		if ( self afterlife_weapon_limit_check( "bo2_blundergat" ) )
 		{
 			return 0;
 		}
-		limit = level.limited_weapons[ "shotgun_blundergat" ];
+		limit = level.limited_weapons[ "bo2_blundergat" ];
 	}
 	else
 	{
@@ -1140,9 +1090,9 @@ function check_for_special_weapon_limit_exist( weapon )
 	i = 0;
 	while ( i < players.size )
 	{
-		if ( weapon.name == "shotgun_blundergat" )
+		if ( weapon.name == "bo2_blundergat" )
 		{
-			if ( players[ i ] zm_weapons::has_weapon_or_upgrade( "shotgun_acidgat" ) || isdefined( players[ i ].is_pack_splatting ) && players[ i ].is_pack_splatting )
+			if ( players[ i ] zm_weapons::has_weapon_or_upgrade( "bo2_acidgat" ) || isdefined( players[ i ].is_pack_splatting ) && players[ i ].is_pack_splatting )
 			{
 				count++;
 				i++;
@@ -1169,14 +1119,14 @@ function afterlife_weapon_limit_check( limited_weapon )
 {
 	if ( isdefined( self.afterlife ) && self.afterlife )
 	{
-		if ( limited_weapon == "shotgun_blundergat" )
+		if ( limited_weapon == "bo2_blundergat" )
 		{
 			_a1577 = self.loadout;
 			_k1577 = GetFirstArrayKey( _a1577 );
 			while ( isdefined( _k1577 ) )
 			{
 				weapon = _a1577[ _k1577 ];
-				if ( weapon.name != "shotgun_blundergat" && weapon.name != "shotgun_blundergat_upgraded" || weapon.name == "shotgun_acidgat" && weapon.name == "shotgun_acidgat_upgraded" )
+				if ( weapon.name != "bo2_blundergat" && weapon.name != "bo2_blundergat_upgraded" || weapon.name == "bo2_acidgat" && weapon.name == "bo2_acidgat_upgraded" )
 				{
 					return 1;
 				}

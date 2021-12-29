@@ -266,9 +266,9 @@ function play_loop_on_machine()
 {
 	if( isdefined( level.sndPerksacolaLoopOverride ) )
 		return;
-	
+
 	sound_ent = spawn( "script_origin", self.origin );
-	sound_ent playloopsound("zmb_perks_machine_loop");
+	sound_ent playloopsound("perksacola_loop2");
 	sound_ent LinkTo( self );
 	self waittill( "stop_loopsound" );
 	sound_ent UnLink();

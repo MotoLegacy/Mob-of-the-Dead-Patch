@@ -8,6 +8,7 @@ scripts/zm/zm_alcatraz_hud_buildables.gsc
 scripts/zm/zm_alcatraz_island.csc
 scripts/zm/zm_alcatraz_island.gsc
 scripts/zm/zm_alcatraz_perks.gsc
+scripts/zm/zm_alctraz_visions.gsc
 scripts/zm/zm_prison_sq_clickbait.gsc
 scripts/zm/zm_usermap.gsc
 ui/uieditor/widgets/motdr/InventoryItem.lua

@@ -9,10 +9,12 @@
 #using scripts\shared\laststand_shared;
 #using scripts\shared\math_shared;
 #using scripts\shared\scene_shared;
+#using scripts\shared\system_shared;
 #using scripts\shared\util_shared;
 #using scripts\shared\lui_shared;
 #using scripts\shared\spawner_shared;
 #using scripts\shared\hud_util_shared;
+#using scripts\shared\weapons\_weaponobjects;
 
 #using scripts\shared\visionset_mgr_shared;
 
@@ -32,6 +34,8 @@
 #using scripts\zm\_zm_powerups;
 #using scripts\zm\gametypes\_zm_gametype;
 #using scripts\shared\ai\zombie_utility;
+#using scripts\zm\_util;
+#using scripts\zm\_zm_weap_riotshield;
 
 #using scripts\zm\_zm_perk_electric_cherry;
 #using scripts\zm\zk_buyable_elevator_v2;
@@ -50,10 +54,12 @@
 
 //#using scripts\zm\_zm_ai_brutus;
 
+#insert scripts\zm\_zm_buildables.gsh;
 #insert scripts\shared\version.gsh;
 #insert scripts\shared\shared.gsh;
 #insert scripts\zm\_zm_utility.gsh;
 #insert scripts\zm\_zm_perks.gsh;
+#insert scripts\shared\archetype_shared\archetype_shared.gsh;
 
 #precache( "material", "afterlife_logo" );
 #precache( "material", "afterlife_logo_waypoint" );
@@ -91,6 +97,7 @@ function give_afterlife() {
     foreach(player in GetPlayers()) {
         if ( isdefined( player.afterlife ) && !player.afterlife ) {
             player thread fake_kill_player( n_start_pos );
+			player util::clientnotify( "al_e" );
             n_start_pos++;
         }
     }
@@ -485,7 +492,7 @@ function afterlife_player_damage_callback( einflictor, eattacker, idamage, idfla
 
 	if ( smeansofdeath != "MOD_PROJECTILE" && smeansofdeath != "MOD_PROJECTILE_SPLASH" || smeansofdeath == "MOD_GRENADE" && smeansofdeath == "MOD_GRENADE_SPLASH" )
 	{
-		if ( sweapon == GetWeapon("shotgun_acidgat_bullet") )
+		if ( sweapon == GetWeapon("bo2_acidgat_bullet") )
 		{
 			if ( self HasPerk( "specialty_flakjacket" ) )
 			{
@@ -550,6 +557,7 @@ function afterlife_enter()
 		//visionset_mgr::activate( "overlay", "afterlife_filter", self );
 		self.afterlife_visionset = 1;
 	}
+	self util::clientnotify( "al_e" );
 	self FreezeControls( 0 );
 	self thread zm_player_fake_death_cleanup();
 	self thread af_make_waypoint();
@@ -603,6 +611,7 @@ function afterlife_leave( b_revived )
 		self.progressBar Destroy();
 		self.progressText Destroy();
 	}
+	self util::clientnotify( "al_l" );
 	self.dontspeak = 0;
 	self.ghost_fx_link Delete();
 	self thread afterlife_doors_close();
@@ -671,6 +680,7 @@ function afterlife_leave( b_revived )
 	reset_all_afterlife_unitriggers();
 	wait 1;
 	self.ignoreme = 0;
+	wait 3;
 	self DisableInvulnerability();
 }
 
@@ -742,7 +752,16 @@ function afterlife_laststand( b_electric_chair, neworigin )
 		self util::clientnotify( "al_t" );
 		wait 1;
 		self thread lui::screen_flash( 0.5, 1, 0.5, 1, "white" );
+		//self AllowStand(1);
+		//self AllowCrouch(1);
+		//wait 0.1;
+		//self SetStance("stand");
 		wait 0.5;
+		self PlaySoundToPlayer( "zmb_afterlife_start", self );
+		self FreezeControls( 0 );
+		self SetStance("stand");
+		wait 0.1;
+		self FreezeControls( 1 );
 	}
 	self Ghost();
 	self.e_afterlife_corpse = self afterlife_spawn_corpse( neworigin );
@@ -752,6 +771,7 @@ function afterlife_laststand( b_electric_chair, neworigin )
 	self afterlife_enter();
 	self.e_afterlife_corpse clientfield::set( "player_corpse_id", self GetEntityNumber() + 1 );
 	wait 0.5;
+	//self SetStance("stand");
 	self Show();
 	self FreezeControls( 0 );
 	self DisableInvulnerability();
@@ -765,6 +785,7 @@ function afterlife_laststand( b_electric_chair, neworigin )
 	self.afterlife_revived = 1;
 	self EnableWeapons();
 	PlaySoundAtPosition( "zmb_afterlife_spawn_leave", self.e_afterlife_corpse.origin );
+	self PlaySound( "zmb_afterlife_end" );
 	self thread afterlife_revive_invincible();
 	self afterlife_leave();
 	self PlaySound( "zmb_afterlife_revived_gasp" );
@@ -998,6 +1019,16 @@ function afterlife_spawn_corpse( neworigin )
 	{
 		neworigin = self.origin;
 	}
+
+	// drop corpse origin to floor (in case of jump)
+	trace = bullettrace( neworigin, neworigin + (0,0,-256), false, undefined );
+	ground_pos = trace["position"];
+	if( isdefined(ground_pos) )
+	{
+		neworigin = ( neworigin[0], neworigin[1], ground_pos[2] );
+	}
+
+
 	if ( isdefined( self.is_on_gondola ) && self.is_on_gondola && level.e_gondola.destination == "roof" )
 	{
 		corpse = zm_alcatraz_sq::spawn_player_clone( self, neworigin, undefined );
@@ -1547,6 +1578,14 @@ function afterlife_save_loadout()
 		}
 		index = GetNextArrayKey( _a1516, index );
 	}
+	if (IS_TRUE(self.hasriotshield))
+	{
+		shield_health = self DamageRiotShield(0);
+		shield_damage = level.weaponRiotshield.weaponstarthitpoints - shield_health;
+
+		self.loadout.shielddamage = shield_damage;
+		//IPrintLnBold("dmg: " + self.loadout.shielddamage);
+	}
 	self.loadout.equipment = self zm_equipment::get_player_equipment();
 	if ( isdefined( self.loadout.equipment ) )
 	{
@@ -1566,6 +1605,14 @@ function afterlife_save_loadout()
 	{
 		self.loadout.hastomahawk = 1;
 		self clientfield::set_to_player( "tomahawk_in_use", 0 );
+	}
+	if ( self HasWeapon( GetWeapon("spoon_alcatraz") ) )
+	{
+		self.loadout.hasspoon = 1;
+	}
+	if ( self HasWeapon( GetWeapon("spork_alcatraz") ) )
+	{
+		self.loadout.hasspork = 1;
 	}
 	self.loadout.perks = afterlife_save_perks( self );
 	lethal_grenade = self zm_utility::get_player_lethal_grenade();
@@ -1662,6 +1709,23 @@ function afterlife_give_loadout()
 		self zm_utility::set_player_tactical_grenade( GetWeapon(self.current_tomahawk_weapon) );
 		self clientfield::set_to_player( "tomahawk_in_use", 1 );
 	}
+	if ( isdefined( loadout.hasspoon ) && loadout.hasspoon )
+	{
+		self TakeWeapon( self zm_utility::get_player_melee_weapon() );
+		self GiveWeapon( GetWeapon("spoon_alcatraz") );
+	}
+	if ( isdefined( loadout.hasspork ) && loadout.hasspork )
+	{
+		self TakeWeapon( self zm_utility::get_player_melee_weapon() );
+		self GiveWeapon( GetWeapon("spork_alcatraz") );
+	}
+	if (isdefined( loadout.shielddamage ) && loadout.shielddamage)
+	{
+		// restore shield health
+		//IPrintLnBold("damaging shield: " + loadout.shielddamage);
+		self DamageRiotShield(loadout.shielddamage);
+		self riotshield::player_set_shield_health(loadout.shielddamage, 1500);
+	}
 	self.score = loadout.score;
 	perk_array = self zm_perks::get_perk_array();
 	i = 0;
@@ -1717,18 +1781,22 @@ function afterlife_fake_death()
 	level notify( "fake_death" );
 	self notify( "fake_death" );
 	self TakeAllWeapons();
-	self AllowStand( 0 );
+	/*self AllowStand( 0 );
 	self AllowCrouch( 0 );
-	self AllowProne( 1 );
+	self AllowProne( 1 );*/
+	wait 0.1;
 	self SetStance( "prone" );
+	wait 0.1;
+	self FreezeControls( 1 );
+	SetDvar("cg_drawgun", 0);
 	while ( self zm_utility::is_jumping() )
 	{
 		wait 0.05;
 	}
 	PlayFX( level._effect[ "afterlife_enter" ], self.origin );
+	self PlaySoundToPlayer( "zmb_afterlife_death", self );
 	self.ignoreme = 1;
 	self EnableInvulnerability();
-	self FreezeControls( 1 );
 }
 
 function afterlife_fake_revive()
@@ -1748,13 +1816,14 @@ function afterlife_fake_revive()
 	{
 		PlaySoundAtPosition( "zmb_afterlife_spawn_enter", self.origin );
 	}
-	self AllowStand( 1 );
 	self AllowCrouch( 0 );
 	self AllowProne( 0 );
 	self AllowSlide( 0 );
 	self GiveWeapon( GetWeapon("lightning_hands") );
 	self SwitchToWeapon( GetWeapon("lightning_hands") );
+	self SetStance("stand");
 	self zm_score::minus_to_player_score(self.score);
+	SetDvar("cg_drawgun", 1);
 	wait 1;
 	self.ignoreme = 0;
 }
@@ -1881,7 +1950,7 @@ function afterlife_trigger_create( s_origin )
 	s_origin.unitrigger_stub.radius = 36;
 	s_origin.unitrigger_stub.height = 256;
 	s_origin.unitrigger_stub.script_unitrigger_type = "unitrigger_radius_use";
-	s_origin.unitrigger_stub.hint_string = "Press ^3&&1^7 to enter afterlife";
+	s_origin.unitrigger_stub.hint_string = "Press ^3&&1^7 to enter Afterlife";
 	s_origin.unitrigger_stub.cursor_hint = "HINT_NOICON";
 	s_origin.unitrigger_stub.require_look_at = 1;
 	s_origin.unitrigger_stub.prompt_and_visibility_func = &afterlife_trigger_visibility;
@@ -1909,11 +1978,11 @@ function afterlife_trigger_visibility( player )
 	self SetInvisibleToPlayer( player, b_is_invis );
 	if ( player.af_lives <= 0 )
 	{
-		self SetHintString( "No afterlife remaining" );
+		self SetHintString( "No Afterlife Remaining" );
 	}
 	else
 	{
-		self SetHintString( "Press ^3&&1^7 to enter afterlife" );
+		self SetHintString( "Press ^3&&1^7 to enter Afterlife" );
 		if ( !isdefined( player.has_played_afterlife_trigger_hint ) && player zm_utility::is_player_looking_at( self.stub.origin, 0.25 ) )
 		{
 			if ( isdefined( player.dontspeak ) && !player.dontspeak )
@@ -1961,7 +2030,7 @@ function afterlife_trigger_think()
 			PlayFXOnTag( level._effect[ "afterlife_kill_point_fx" ], e_fx, "tag_origin" );
 			wait 2;
 			e_fx Delete();
-			self SetHintString( "Press ^3&&1^7 to enter afterlife" );
+			self SetHintString( "Press ^3&&1^7 to enter Afterlife" );
 		}
 	}
 }
@@ -2427,7 +2496,8 @@ function zm_player_fake_death( vdir )
 		self AllowProne( 1 );
 		self AllowCrouch( 0 );
 		self AllowStand( 0 );
-		self SetStance("prone");
+		wait 0.1;
+		//self SetStance("prone");
 		wait 0.25;
 		self FreezeControls( 1 );
 	}

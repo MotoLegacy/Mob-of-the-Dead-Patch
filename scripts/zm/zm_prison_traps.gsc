@@ -327,11 +327,11 @@ function acid_trap_think() {
 	self.zombie_dmg_trig.in_use = 0;
 	light_name = self get_trap_light_name();
 	zapper_light_red( light_name );
-	self SetHintString( &"ZOMBIE_NEED_POWER" );
+	self SetHintString( "Acid Trap Unavailable" );
 	level flag::wait_till( "enter_cafe_zone" );
 	//level flag::wait_till_any( "activate_cafeteria", "activate_infirmary" );
 	zapper_light_green( light_name );
-	self SetHintString( &"ZOMBIE_BUTTON_BUY_TRAP" , self.cost );
+	self SetHintString( "Hold ^3[{+activate}]^7 to activate Acid Trap [Cost: &&1]" , self.cost );
 	while ( 1 ) {
 		self waittill( "trigger", who );
 		if ( who zm_utility::in_revive_trigger() ) {

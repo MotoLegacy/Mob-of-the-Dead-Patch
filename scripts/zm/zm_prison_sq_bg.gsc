@@ -164,16 +164,16 @@ function give_sq_bg_reward() {
 	if ( a_players.size == 1 ) {
 		if ( a_players[ 0 ] HasWeapon( blundergat ) ) {
 			str_reward_weapon = GetWeapon("bo2_acidgat");
-			str_loc = "Press ^2&&1^7 to get Acidgat";
+			str_loc = "Press ^3&&1^7 to get Acidgat";
 		}
 		else {
 			str_reward_weapon = blundergat;
-			str_loc = "Press ^2&&1^7 to get Blundergat";
+			str_loc = "Press ^3&&1^7 to get Blundergat";
 		}
 	}
 	else {
 		str_reward_weapon = blundergat;
-		str_loc = "Press ^2&&1^7 to get Blundergat";
+		str_loc = "Press ^3&&1^7 to get Blundergat";
 	}
 	m_reward_model = zm_utility::spawn_weapon_model( str_reward_weapon, undefined, s_reward_origin.origin, s_reward_origin.angles );
 	m_reward_model MoveTo( m_reward_model.origin + vectorScale( ( 0, 0, 1 ), 14 ), 5 );

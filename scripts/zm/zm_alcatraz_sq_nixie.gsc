@@ -142,6 +142,7 @@ function generate_unrestricted_nixie_tube_solution()
 	a_restricted_solutions[ 4 ] = 101;
 	a_restricted_solutions[ 5 ] = 872;
 	a_restricted_solutions[ 6 ] = 666;
+	a_restricted_solutions[ 7 ] = 903;
 	a_numbers = [];
 	i = 0;
 	while ( i < 10 )
@@ -189,9 +190,11 @@ function nixie_tube_notifier()
 		level.a_important_codes[ level.a_important_codes.size ] = 115;
 		level.a_important_codes[ level.a_important_codes.size ] = 935;
 		level.a_important_codes[ level.a_important_codes.size ] = 666;
+		level.a_important_codes[ level.a_important_codes.size ] = 903;
 	}
 	level thread nixie_115();
 	level thread nixie_935();
+	level thread nixie_903();
 	level thread nixie_666();
 	while ( !isdefined( level.a_nixie_tube_code ) || !isdefined( level.a_nixie_tube_code[ 3 ] ) )
 	{
@@ -599,6 +602,18 @@ function nixie_935()
 	nixie_reset_control();
 }
 
+function nixie_903()
+{
+	level waittill( "nixie_" + 903 );
+	level notify( "kill_nixie_input" );
+	level flag::set( "nixie_puzzle_solved" );
+	level thread nixie_903_audio();
+	nixie_tube_win_effects_all_tubes( 5, 1, 1 );
+	level flag::set( "nixie_ee_flashing" );
+	level flag::clear( "nixie_puzzle_solved" );
+	nixie_reset_control();
+}
+
 function nixie_666()
 {
 	level waittill( "nixie_" + 666 );
@@ -631,6 +646,14 @@ function nixie_935_audio()
 	foreach(player in GetPlayers())
     {
     	player PlaySoundToPlayer( "mus_zmb_secret_song_2", player );
+    }
+}
+
+function nixie_903_audio()
+{
+	foreach(player in GetPlayers())
+    {
+    	player PlaySoundToPlayer( "mus_zmb_secret_song_3", player );
     }
 }
 

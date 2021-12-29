@@ -14,20 +14,44 @@ localize,ZM_PRISON
 
 sound,zm_mod
 
+ttf,fonts/Agency.ttf
+
 rawfile,vision/afterlife.vision
+rawfile,vision/zm_alcatraz_cellblock.vision
+rawfile,vision/zm_alcatraz_underground.vision
+rawfile,vision/zm_alcatraz_outside.vision
+rawfile,vision/zm_alcatraz_bw.vision
+
+xanim,ai_actor_elec_chair_idle
+scriptbundle,ai_actor_chairshit
 
 fx,lensflares/fx_lensflare_fire_grime
 
+//fx,harry/zm_perks/fx_perk_doubletap_light
+
+//fx,zombie/fx_perk_doubletap2_factory_zmb
+//fx,dog/fx_perk_doubletap_light
+
+//fx,custom/fx_weapon_box_marker_zmb
+//fx,custom/fx_weapon_box_marker_fl_zmb
+
 scriptparsetree,scripts\zm\_zm.gsc
 scriptparsetree,scripts\zm\_zm.csc
+
+// scriptparsetree,scripts\zm\zm_prison_traps.gsc
 
 scriptparsetree,scripts\zm\_load.gsc
 scriptparsetree,scripts\zm\zm_giant_cleanup_mgr.gsc
 
 scriptparsetree,scripts/zm/_zm_perks.gsc
 
+scriptparsetree,scripts/zm/_zm_spawner.gsc
+
 scriptparsetree,scripts/zm/_zm_powerup_full_ammo.gsc
 scriptparsetree,scripts/zm/_zm_powerup_full_ammo.csc
+
+scriptparsetree,scripts/zm/_zm_powerup_carpenter.gsc
+scriptparsetree,scripts/zm/_zm_powerup_carpenter.csc
 
 stringtable,gamedata/audio/zm/zm_al_vox.csv
 stringtable,gamedata/weapons/zm/zm_motd_weapons.csv
@@ -49,9 +73,12 @@ scriptparsetree,scripts/zm/_zm_ai_brutus.gsc
 
 scriptparsetree,scripts/zm/zm_prison_sq_bg.gsc
 
+scriptparsetree,scripts/zm/zm_prison_weap_quest.gsc
+
 scriptparsetree,scripts/zm/zm_alcatraz_amb.gsc
 
 scriptparsetree,scripts/zm/zm_usermap.gsc
+scriptparsetree,scripts/zm/zm_usermap.csc
 
 scriptparsetree,scripts/zm/_zm_afterlife.gsc
 scriptparsetree,scripts/zm/_zm_afterlife.csc
@@ -63,6 +90,7 @@ weapon,lightning_hands_zm
 weapon,lightning_hands_revive_zm
 
 weapon,spoon_alcatraz_zm
+weapon,spork_alcatraz_zm
 
 //weapon,m1911dw_zm
 //weapon,pistol_m1911_zm
@@ -83,6 +111,8 @@ scriptparsetree,scripts/zm/zm_alcatraz_sq_vo.gsc
 scriptparsetree,scripts/zm/zm_alcatraz_utility.gsc
 scriptparsetree,scripts/zm/zm_alcatraz_hud_buildables.gsc
 
+//scriptparsetree,scripts/zm/_zm_powerups.gsc
+
 scriptparsetree,scripts/zm/zm_prison_travel.gsc
 
 scriptparsetree,scripts/zm/craftables/_zm_craft_shield.gsc
@@ -94,11 +124,14 @@ scriptparsetree,scripts/zm/_zm_magicbox_lock.gsc
 scriptparsetree,scripts/zm/_zm_magicbox_prison.gsc
 scriptparsetree,scripts/zm/_zm_magicbox_prison.csc
 scriptparsetree,scripts/zm/zm_prison_sq_final.gsc
+scriptparsetree,scripts/zm/zm_prison_sq_final.csc
 
 scriptparsetree,scripts/zm/zm_alcatraz_craftables.gsc
 scriptparsetree,scripts/zm/zm_alcatraz_craftables.csc
 
 scriptparsetree,scripts/zm/zm_alcatraz_island.gsc
+
+scriptparsetree,scripts/zm/zm_alcatraz_visions.gsc
 
 aitype,archetype_zm_cellbreaker
 aitype,variant_zm_cellbreaker
